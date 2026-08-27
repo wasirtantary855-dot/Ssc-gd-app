@@ -1,0 +1,8 @@
+{
+  "name": "Remix SSC GD Constable Exam Prep",
+  "description": "Complete SSC GD Constable Exam Preparation App in English with Reasoning, GK, Elementary Maths, English Language, 20 Mock Tests, Practice Questions, Revision Notes \u0026 AI Tutor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
