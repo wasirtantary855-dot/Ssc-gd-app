@@ -22,10 +22,10 @@ class BookRepository(
     fun getChapterById(id: String): Chapter? =
         SSCBookDataProvider.getChapterById(id)
 
-    fun getAllMockTests(): List<MockTest> = SSCBookDataProvider.mockTests
+    fun getAllMockTests(): List<MockTest> = SSCBookDataProvider.getAllMockTests()
 
     fun getMockTestById(id: Int): MockTest? =
-        SSCBookDataProvider.mockTests.firstOrNull { it.id == id }
+        SSCBookDataProvider.getAllMockTests().firstOrNull { it.id == id }
 
     fun getAllRevisionFacts(): List<RevisionFact> = SSCBookDataProvider.revisionFactCategoryList
 

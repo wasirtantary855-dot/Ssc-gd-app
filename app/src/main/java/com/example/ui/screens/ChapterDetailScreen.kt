@@ -421,7 +421,7 @@ fun ChapterDetailScreen(
                     )
                 }
                 itemsIndexed(chapter.practiceQuestions) { index, question ->
-                    PracticeQuestionCard(questionNumber = index + 1, question = question)
+                    PracticeQuestionCard(questionNumber = index + 1, question = question, viewModel = viewModel)
                 }
             }
 
@@ -558,9 +558,12 @@ fun SolvedExampleCard(example: SolvedExample) {
 private fun String?.isNull_or_empty(): Boolean = this == null || this.trim().isEmpty()
 
 @Composable
-fun PracticeQuestionCard(questionNumber: Int, question: Question) {
+fun PracticeQuestionCard(questionNumber: Int, question: Question, viewModel: BookViewModel? = null) {
     var selectedOption by remember { mutableStateOf<Int?>(null) }
     var showSolution by remember { mutableStateOf(false) }
+
+    val bookmarks = viewModel?.userBookmarks?.collectAsState()?.value ?: emptyList()
+    val isBookmarked = bookmarks.any { it.id == question.id }
 
     Card(
         modifier = Modifier
@@ -570,11 +573,32 @@ fun PracticeQuestionCard(questionNumber: Int, question: Question) {
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Question $questionNumber: ${question.questionText}",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
+                Text(
+                    text = "Question $questionNumber: ${question.questionText}",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+                if (viewModel != null) {
+                    IconButton(
+                        onClick = {
+                            viewModel.toggleBookmark(
+                                id = question.id,
+                                title = "Question: ${question.questionText.take(30)}...",
+                                type = "QUESTION",
+                                subtitle = "Subject: ${question.subjectType.titleEnglish}"
+                            )
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Outlined.BookmarkBorder,
+                            contentDescription = "Bookmark",
+                            tint = if (isBookmarked) GoldAccent else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(12.dp))
 
             val options = listOf(question.optionA, question.optionB, question.optionC, question.optionD)

@@ -77,30 +77,7 @@ fun BookmarksScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(bookmarks) { bm ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { onNavigateToChapter(bm.id) }
-                                    .testTag("bookmark_item_${bm.id}"),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(14.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(Icons.Default.Bookmark, contentDescription = null, tint = GoldAccent)
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(text = bm.title, fontWeight = FontWeight.Bold)
-                                        Text(text = bm.subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                    }
-                                    IconButton(onClick = { viewModel.toggleBookmark(bm.id, bm.title, bm.type, bm.subtitle) }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red.copy(alpha = 0.7f))
-                                    }
-                                }
-                            }
+                            ExpandableBookmarkItem(bm = bm, viewModel = viewModel, onNavigateToChapter = onNavigateToChapter)
                         }
                     }
                 }
@@ -133,6 +110,78 @@ fun BookmarksScreen(
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(text = note.noteContent, style = MaterialTheme.typography.bodyMedium)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ExpandableBookmarkItem(
+    bm: com.example.data.model.UserBookmark,
+    viewModel: BookViewModel,
+    onNavigateToChapter: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                when (bm.type) {
+                    "CHAPTER" -> onNavigateToChapter(bm.id)
+                    "FACT", "QUESTION" -> expanded = !expanded
+                    else -> onNavigateToChapter(bm.id)
+                }
+            }
+            .testTag("bookmark_item_${bm.id}"),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Default.Bookmark, contentDescription = null, tint = GoldAccent)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = bm.title, fontWeight = FontWeight.Bold)
+                    Text(text = bm.subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                IconButton(onClick = { viewModel.toggleBookmark(bm.id, bm.title, bm.type, bm.subtitle) }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red.copy(alpha = 0.7f))
+                }
+            }
+
+            if (expanded) {
+                if (bm.type == "QUESTION") {
+                    val allQuestions = remember { viewModel.allChapters.flatMap { it.practiceQuestions } }
+                    val question = allQuestions.find { it.id == bm.id }
+                    if (question != null) {
+                        Column(modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 14.dp)) {
+                            Text(text = "A) ${question.optionA}", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "B) ${question.optionB}", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "C) ${question.optionC}", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "D) ${question.optionD}", style = MaterialTheme.typography.bodyMedium)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(text = "Answer: Option ${listOf("A", "B", "C", "D")[question.correctOptionIndex]}", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                            Text(text = "Solution: ${question.detailedSolution}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                } else if (bm.type == "FACT") {
+                    val fact = viewModel.allRevisionFacts.find { it.id == bm.id }
+                    if (fact != null) {
+                        Column(modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 14.dp)) {
+                            fact.bulletPoints.forEach { point ->
+                                Row(modifier = Modifier.padding(vertical = 2.dp)) {
+                                    Text("• ", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.ExtraBold)
+                                    Text(text = point, style = MaterialTheme.typography.bodyMedium)
                                 }
                             }
                         }

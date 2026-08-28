@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,6 +30,7 @@ fun RevisionScreen(
     onBackClick: () -> Unit
 ) {
     val facts = viewModel.allRevisionFacts
+    val userBookmarks by viewModel.userBookmarks.collectAsState()
 
     Scaffold(
         topBar = {
@@ -61,7 +64,7 @@ fun RevisionScreen(
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Column(modifier = Modifier.padding(18.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                             Surface(
                                 color = Indigo50,
                                 shape = RoundedCornerShape(8.dp)
@@ -79,6 +82,22 @@ fun RevisionScreen(
                                         color = Indigo600
                                     )
                                 }
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            val isBookmarked = userBookmarks.any { it.id == fact.id }
+                            IconButton(onClick = {
+                                viewModel.toggleBookmark(
+                                    id = fact.id,
+                                    title = fact.title,
+                                    type = "FACT",
+                                    subtitle = fact.category
+                                )
+                            }) {
+                                Icon(
+                                    imageVector = if (isBookmarked) Icons.Default.Bookmark else Icons.Outlined.BookmarkBorder,
+                                    contentDescription = "Bookmark",
+                                    tint = if (isBookmarked) GoldAccent else Slate500
+                                )
                             }
                         }
                         Spacer(modifier = Modifier.height(10.dp))

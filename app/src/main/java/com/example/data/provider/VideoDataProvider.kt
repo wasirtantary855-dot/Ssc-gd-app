@@ -42,18 +42,40 @@ object VideoDataProvider {
         return "https://img.youtube.com/vi/$cleanId/mqdefault.jpg"
     }
 
-    val defaultVideos: List<VideoLesson> = listOf(
-        // REASONING
+    val defaultVideos: List<VideoLesson> get() = buildList {
+        val baseList = baseDefaultVideos
+        addAll(baseList)
+        
+        val agniveerList = baseList.map { 
+            it.copy(
+                id = it.id + "_ag", 
+                examCategory = com.example.data.model.ExamCategory.AGNIVEER,
+                title = it.title.replace("SSC GD", "Agniveer")
+            )
+        }
+        addAll(agniveerList)
+        
+        val taList = baseList.map { 
+            it.copy(
+                id = it.id + "_ta", 
+                examCategory = com.example.data.model.ExamCategory.TERRITORIAL_ARMY,
+                title = it.title.replace("SSC GD", "Territorial Army")
+            )
+        }
+        addAll(taList)
+    }
+
+    val baseDefaultVideos: List<VideoLesson> = listOf(
         VideoLesson(
             id = "vid_reas_01",
             subjectType = SubjectType.REASONING,
             topicName = "Analogy",
-            title = "SSC GD Reasoning Classes 2026 - Analogy Masterclass & Shortcuts",
+            title = "SSC GD Reasoning Classes 2026-2027 - Analogy Masterclass & Shortcuts",
             youtubeVideoId = "CHAykHhzjnA",
             youtubeUrl = "https://www.youtube.com/watch?v=CHAykHhzjnA",
             duration = "52 mins",
             instructor = "SSC GD Exam Faculty",
-            description = "Master Word Analogy, Number Analogy, and Letter Analogy with shortcut elimination techniques for SSC GD 2026.",
+            description = "Master Word Analogy, Number Analogy, and Letter Analogy with shortcut elimination techniques for 2026-2027.",
             linkedChapterId = "reas_01"
         ),
         VideoLesson(
@@ -256,7 +278,7 @@ object VideoDataProvider {
             id = "vid_gk_05",
             subjectType = SubjectType.CURRENT_AFFAIRS,
             topicName = "Current Affairs",
-            title = "Current Affairs 2025-2026: Sports, Awards, Summits & Schemes",
+            title = "Current Affairs 2026-2027: Sports, Awards, Summits & Schemes",
             youtubeVideoId = "i6O7p8A9s0D",
             youtubeUrl = "https://www.youtube.com/watch?v=CHAykHhzjnA",
             duration = "1 hr 00 min",

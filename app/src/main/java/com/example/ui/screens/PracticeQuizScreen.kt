@@ -89,7 +89,7 @@ fun PracticeQuizScreen(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 itemsIndexed(filteredQuestions) { idx, q ->
-                    PracticeQuestionCard(questionNumber = idx + 1, question = q)
+                    PracticeQuestionCard(questionNumber = idx + 1, question = q, viewModel = viewModel)
                 }
             }
         }

@@ -3,11 +3,17 @@ package com.example.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+enum class ExamCategory(val title: String) {
+    SSC_GD("SSC GD Constable"),
+    AGNIVEER("Agniveer"),
+    TERRITORIAL_ARMY("Territorial Army")
+}
+
 enum class SubjectType(val titleHindi: String, val titleEnglish: String) {
     INTRO("SSC GD Exam Overview", "SSC GD Exam Overview & Pattern"),
     REASONING("General Intelligence & Reasoning", "General Intelligence & Reasoning"),
     GENERAL_KNOWLEDGE("General Knowledge & General Awareness", "General Knowledge & Awareness"),
-    CURRENT_AFFAIRS("Current Affairs 2025-2026", "Current Affairs 2025-2026"),
+    CURRENT_AFFAIRS("Current Affairs 2026-2027", "Current Affairs 2026-2027"),
     MATHEMATICS("Elementary Mathematics", "Elementary Mathematics"),
     HINDI_LANGUAGE("General English & Language", "English & General Language"),
     ENGLISH_LANGUAGE("General English", "English Language"),
@@ -26,6 +32,7 @@ enum class DifficultyLevel(val labelHindi: String) {
 
 data class Chapter(
     val id: String,
+    val examCategory: ExamCategory = ExamCategory.SSC_GD,
     val subjectType: SubjectType,
     val titleHindi: String,
     val titleEnglish: String,
@@ -72,6 +79,7 @@ data class FormulaBox(
 
 data class MockTest(
     val id: Int,
+    val examCategory: ExamCategory = ExamCategory.SSC_GD,
     val title: String,
     val description: String,
     val totalQuestions: Int = 80, // SSC GD Pattern: 20 Reasoning + 20 GK + 20 Maths + 20 Hindi/English
@@ -132,6 +140,7 @@ data class UserNote(
 @Entity(tableName = "video_lessons")
 data class VideoLesson(
     @PrimaryKey val id: String,
+    val examCategory: ExamCategory = ExamCategory.SSC_GD,
     val subjectType: SubjectType,
     val topicName: String,
     val title: String,

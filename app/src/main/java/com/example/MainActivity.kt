@@ -117,9 +117,20 @@ fun MainApp(viewModel: BookViewModel) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = "exam_selection",
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable("exam_selection") {
+                ExamSelectionScreen(
+                    onExamSelected = { exam ->
+                        viewModel.selectExam(exam)
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo("exam_selection") { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(Screen.Home.route) {
                 HomeScreen(
                     viewModel = viewModel,

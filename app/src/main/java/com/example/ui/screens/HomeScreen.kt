@@ -52,7 +52,10 @@ fun HomeScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val userProgress by viewModel.userProgress.collectAsState()
     val allVideos by viewModel.allVideos.collectAsState()
+    val selectedExam by viewModel.selectedExam.collectAsState()
     val allChapters = viewModel.allChapters
+
+    // ... inside component ...
     val completedCount = userProgress.count { it.isCompleted }
     val progressPercent = if (allChapters.isNotEmpty()) ((completedCount.toFloat() / allChapters.size) * 100).toInt() else 0
 
@@ -78,7 +81,7 @@ fun HomeScreen(
         ) {
             Column {
                 Text(
-                    text = "SSC GD CONSTABLE 2024-25",
+                    text = "${selectedExam.title.uppercase()} 2026-2027",
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = Indigo600,
@@ -252,7 +255,7 @@ fun HomeScreen(
                                 shape = RoundedCornerShape(6.dp)
                             ) {
                                 Text(
-                                    text = "SSC GD Constable 2024-25 Complete Guide",
+                                    text = "${selectedExam.title} 2026-2027 Complete Guide",
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = Color.White,

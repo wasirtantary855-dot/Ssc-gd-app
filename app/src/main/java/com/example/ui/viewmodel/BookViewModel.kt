@@ -32,10 +32,10 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // State flows
-    val allSubjects: List<SubjectType> = repository.allSubjects
-    val allChapters: List<Chapter> = repository.getAllChapters()
-    val allMockTests: List<MockTest> = repository.getAllMockTests()
-    val allRevisionFacts: List<RevisionFact> = repository.getAllRevisionFacts()
+    val allSubjects: List<SubjectType> get() = repository.allSubjects
+    val allChapters: List<Chapter> get() = repository.getAllChapters().filter { it.examCategory == _selectedExam.value }
+    val allMockTests: List<MockTest> get() = repository.getAllMockTests().filter { it.examCategory == _selectedExam.value }
+    val allRevisionFacts: List<RevisionFact> get() = repository.getAllRevisionFacts()
 
     val allVideos: StateFlow<List<VideoLesson>> = repository.allVideos
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -55,6 +55,13 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
 
+    private val _selectedExam = MutableStateFlow(ExamCategory.SSC_GD)
+    val selectedExam: StateFlow<ExamCategory> = _selectedExam
+
+    fun selectExam(examCategory: ExamCategory) {
+        _selectedExam.value = examCategory
+    }
+
     private val _chatMessages = MutableStateFlow<List<ChatMessage>>(
         listOf(
             ChatMessage(
@@ -72,7 +79,7 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getChapterById(id: String): Chapter? = repository.getChapterById(id)
 
-    fun getChaptersForSubject(subject: SubjectType): List<Chapter> = repository.getChaptersForSubject(subject)
+    fun getChaptersForSubject(subject: SubjectType): List<Chapter> = repository.getChaptersForSubject(subject).filter { it.examCategory == _selectedExam.value }
 
     fun getMockTestById(id: Int): MockTest? = repository.getMockTestById(id)
 

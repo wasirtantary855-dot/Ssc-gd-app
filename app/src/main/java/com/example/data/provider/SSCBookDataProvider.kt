@@ -365,12 +365,12 @@ object SSCBookDataProvider {
         Chapter(
             id = "ca_01",
             subjectType = SubjectType.CURRENT_AFFAIRS,
-            titleHindi = "1. Current Affairs 2025-2026",
-            titleEnglish = "Current Affairs 2025-2026",
+            titleHindi = "1. Current Affairs 2026-2027",
+            titleEnglish = "Current Affairs 2026-2027",
             chapterNumber = 1,
             description = "National affairs, international updates, joint military exercises, sports awards & key appointments.",
             conceptExplanation = """
-                Important Current Affairs updates for SSC GD Exam (2025-2026):
+                Important Current Affairs updates for Exam (2026-2027):
 
                 1. Joint Military Exercises:
                 • Exercise Surya Kiran (India & Nepal).
@@ -672,9 +672,10 @@ object SSCBookDataProvider {
         )
     )
 
-    val mockTests: List<MockTest> = (1..20).map { testNum ->
+    val baseMockTests: List<MockTest> = (1..20).map { testNum ->
         MockTest(
             id = testNum,
+            examCategory = ExamCategory.SSC_GD,
             title = "SSC GD Full Mock Test #$testNum (Latest Pattern 160 Marks)",
             description = "80 Questions (20 Reasoning + 20 GK + 20 Maths + 20 English/Language) | Duration: 60 mins | Negative: -0.25",
             totalQuestions = 80,
@@ -810,7 +811,45 @@ object SSCBookDataProvider {
     )
 
     fun getAllChapters(): List<Chapter> {
-        return introChapters + reasoningChapters + ExpandedBookData.additionalReasoningChapters + gkChapters + currentAffairsChapters + mathsChapters + ExpandedBookData.additionalMathsChapters + hindiChapters + englishChapters
+        val baseList = introChapters + reasoningChapters + ExpandedBookData.additionalReasoningChapters + gkChapters + currentAffairsChapters + mathsChapters + ExpandedBookData.additionalMathsChapters + hindiChapters + englishChapters
+        
+        val agniveerList = baseList.map { 
+            it.copy(
+                id = it.id + "_ag", 
+                examCategory = ExamCategory.AGNIVEER,
+                titleEnglish = it.titleEnglish.replace("SSC GD", "Agniveer"),
+                titleHindi = it.titleHindi.replace("SSC GD", "Agniveer")
+            ) 
+        }
+        
+        val taList = baseList.map { 
+            it.copy(
+                id = it.id + "_ta", 
+                examCategory = ExamCategory.TERRITORIAL_ARMY,
+                titleEnglish = it.titleEnglish.replace("SSC GD", "Territorial Army"),
+                titleHindi = it.titleHindi.replace("SSC GD", "Territorial Army")
+            ) 
+        }
+        
+        return baseList + agniveerList + taList
+    }
+
+    fun getAllMockTests(): List<MockTest> {
+        val agniveerList = baseMockTests.map { 
+            it.copy(
+                id = it.id + 100, 
+                examCategory = ExamCategory.AGNIVEER,
+                title = it.title.replace("SSC GD", "Agniveer")
+            )
+        }
+        val taList = baseMockTests.map { 
+            it.copy(
+                id = it.id + 200, 
+                examCategory = ExamCategory.TERRITORIAL_ARMY,
+                title = it.title.replace("SSC GD", "Territorial Army")
+            )
+        }
+        return baseMockTests + agniveerList + taList
     }
 
     fun getChaptersBySubject(subject: SubjectType): List<Chapter> {
